@@ -9,16 +9,18 @@ import graph.data.CartesianVertexData;
 public class Node implements Vertex {
     
     /** Coordinates of the node */
-    private final CartesianVertexData coordinates;
+    private final int x;
+    private final int y;
     /** Node identifier */
-    private int id;
+    private final int id;
     
     /**
      * Builds a node
      * @param coordinates Coordinates of the node
      */
-    public Node(final int id, final CartesianVertexData coordinates) {
-        this.coordinates = coordinates;
+    public Node(final int id, final int x, final int y) {
+        this.x = x;
+        this.y = y;
         this.id = id;
     }
     
@@ -26,13 +28,13 @@ public class Node implements Vertex {
      * @return Coordinate on the X axis
      */
     public int getX() {
-        return coordinates.x;
+        return x;
     }
     /**
      * @return Coordinate on the Y axis
      */
     public int getY() {
-        return coordinates.y;
+        return y;
     }
 
     /**

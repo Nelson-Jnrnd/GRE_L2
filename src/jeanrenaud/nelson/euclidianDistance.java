@@ -15,6 +15,6 @@ class EuclidianDistance<N extends Node> implements EdgeWeighter<N>{
      */
     @Override
     public long weight(N from, N to) {
-        return (long) Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2));
+        return Math.round(Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2)));
     }
 }

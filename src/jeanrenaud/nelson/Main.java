@@ -6,11 +6,13 @@ package jeanrenaud.nelson;
 
 import graph.core.Edge;
 import graph.core.VertexFactory;
+import graph.core.impl.SimpleWeightedEdge;
 import graph.core.impl.SimpleWeightedEdgeFactory;
 import graph.data.CartesianVertexData;
 import graph.reader.CartesianGraphReader;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Main {
     /*
@@ -31,6 +33,26 @@ public class Main {
                 DATA_FOLDER + "R15_1.txt"                       /* TODO: Chemin des fichiers */
         ).graph();
 
-        System.out.println(graph.getNVertices());
+        Node source = graph.getVertices().stream().filter(node -> node.id() == 2).findFirst().orElse(null);
+        Node target = graph.getVertices().stream().filter(node -> node.id() == 10).findFirst().orElse(null);
+
+
+        for (SimpleWeightedEdge<Node> nodeSimpleWeightedEdge : graph.getSuccessorList(2)) {
+            System.out.println("from:" + nodeSimpleWeightedEdge.from().id() + " to: " + nodeSimpleWeightedEdge.to().id() + " wgt:" + nodeSimpleWeightedEdge.weight());
+        }
+        Dijkstra dijkstra = new Dijkstra(graph, source);
+        System.out.println(dijkstra);
+
+        System.out.println("\nRunning...\n");
+
+        dijkstra.run();
+        System.out.println(dijkstra);
+
+        System.out.println("\nResult\n");
+        dijkstra.getResult().forEach(System.out::println);
+
+        System.out.println("\nShortest path\n");
+        System.out.println(Arrays.toString(dijkstra.getShortestPath(target)));
+
     }
 }
