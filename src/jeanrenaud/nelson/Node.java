@@ -16,7 +16,6 @@ public class Node implements Vertex {
     
     /**
      * Builds a node
-     * @param coordinates Coordinates of the node
      */
     public Node(final int id, final int x, final int y) {
         this.x = x;

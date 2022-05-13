@@ -9,16 +9,18 @@ public class Dijkstra {
     private final int nbVertices;
     private final Digraph<Node, SimpleWeightedEdge<Node>> graph;
     private final Node source;
-
+    private final Node target;
     private int iteration;
 
     private LinkedList<MarkedNode> unkownShortestPathVertices;
     private LinkedList<MarkedNode> shortestPathVertices;
 
-    public Dijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph, Node source) {
+
+    public Dijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph, Node source, Node target) {
         this.graph = graph;
         this.source = source;
         this.nbVertices = graph.getNVertices();
+        this.target = target;
         shortestPathVertices = new LinkedList<>();
         unkownShortestPathVertices = new LinkedList<>();
 
@@ -56,22 +58,22 @@ public class Dijkstra {
     public void run() {
         while (!unkownShortestPathVertices.isEmpty()) {
             MarkedNode current = popMin(unkownShortestPathVertices);
-            if(current.distance == Integer.MAX_VALUE) {
+            if(current.getDistance() == Integer.MAX_VALUE || current.getNode().id() == target.id()) {
                 break; // No more path to explore
             }
-            graph.getSuccessorList(current.graphIndex).forEach(
+            graph.getSuccessorList(current.getNode().id()).forEach(
                     (successorEdge) -> {
-                        int newDistance = current.distance + (int)successorEdge.weight(); //TODO int to long
+                        int newDistance = current.getDistance() + (int)successorEdge.weight(); //TODO int to long
                         Node successor = successorEdge.to();
 
                         // Search for the node in the queue
                         MarkedNode successorMarkedNode = unkownShortestPathVertices.stream()
-                                .filter(node -> node.node.equals(successor))
+                                .filter(node -> node.getNode().equals(successor))
                                 .findFirst()
                                 .orElse(null);
                         if(successorMarkedNode == null) {
-                           // throw new IllegalArgumentException("The node " + successor + " is not in the queue");
-                        } else if(newDistance < successorMarkedNode.distance) {
+                           throw new IllegalArgumentException("The node " + successor + " is not in the queue");
+                        } else if(newDistance < successorMarkedNode.getDistance()) {
                             // The node is in the queue but the new distance is shorter
                             successorMarkedNode.update(newDistance, current);
                             shortestPathVertices.add(successorMarkedNode);
@@ -79,6 +81,16 @@ public class Dijkstra {
                     }
             );
         }
+    }
+
+    private void doIteration() {
+        // Remove the node with the smallest distance from the queue
+        // If that distance is infinite, there is no path to the target
+        // If that distance is not infinite, add the node to the shortest path
+        // For each successor of the node:
+            // If the distance to the successor is greater than the distance to the node plus the edge weight
+            // Update the distance to the successor
+            // Update the predecessor of the successor
     }
 
     @Override
@@ -98,7 +110,7 @@ public class Dijkstra {
 
     public int[] getShortestPath(Node destination) {
         MarkedNode target = shortestPathVertices.stream()
-                .filter(node -> node.node.equals(destination))
+                .filter(node -> node.getNode().equals(destination))
                 .findFirst()
                 .orElse(null);
         if(target == null) {
@@ -107,43 +119,10 @@ public class Dijkstra {
         MarkedNode current = target;
         List<Integer> path = new ArrayList<>();
         while(current != null) {
-            path.add(current.node.id());
-            current = current.previous;
+            path.add(current.getNode().id());
+            current = current.getPrevious();
         }
         Collections.reverse(path);
         return path.stream().mapToInt(Integer::intValue).toArray();
-    }
-    public static class MarkedNode implements Comparable<MarkedNode> {
-        private final int graphIndex;
-        private final Node node;
-        private int distance;
-        private MarkedNode previous;
-
-        public MarkedNode(int graphIndex, Node node, int distance, MarkedNode previous) {
-            this.graphIndex = graphIndex;
-            this.node = node;
-            this.distance = distance;
-            this.previous = previous;
-        }
-
-        @Override
-        public int compareTo(MarkedNode o) {
-            return Integer.compare(distance, o.distance);
-        }
-
-        public void update(int distance, MarkedNode previous) {
-            this.distance = distance;
-            this.previous = previous;
-        }
-
-        @Override
-        public String toString() {
-            return "MarkedNode{" +
-                    "graphIndex=" + graphIndex +
-                    ", node=" + node.id() +
-                    ", distance=" + distance +
-                    ", previous=" + (previous == null ? null : previous.node.id()) +
-                    '}';
-        }
     }
 }

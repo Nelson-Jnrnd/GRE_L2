@@ -30,7 +30,7 @@ public class Main {
                                                             renvoyant la distance euclidienne (arrondie
                                                             à l'entier le plus proche) entre l'extrémité
                                                             initiale et l'extrémité finale de l'arête */),
-                DATA_FOLDER + "R15_1.txt"                       /* TODO: Chemin des fichiers */
+                DATA_FOLDER + "R10000_1.txt"                       /* TODO: Chemin des fichiers */
         ).graph();
 
         Node source = graph.getVertices().stream().filter(node -> node.id() == 2).findFirst().orElse(null);
@@ -40,7 +40,7 @@ public class Main {
         for (SimpleWeightedEdge<Node> nodeSimpleWeightedEdge : graph.getSuccessorList(2)) {
             System.out.println("from:" + nodeSimpleWeightedEdge.from().id() + " to: " + nodeSimpleWeightedEdge.to().id() + " wgt:" + nodeSimpleWeightedEdge.weight());
         }
-        Dijkstra dijkstra = new Dijkstra(graph, source);
+        Dijkstra dijkstra = new Dijkstra(graph, source, target);
         System.out.println(dijkstra);
 
         System.out.println("\nRunning...\n");
