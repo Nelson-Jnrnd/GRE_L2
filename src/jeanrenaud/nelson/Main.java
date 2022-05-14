@@ -4,15 +4,16 @@
  */
 package jeanrenaud.nelson;
 
-import graph.core.Edge;
 import graph.core.VertexFactory;
-import graph.core.impl.SimpleWeightedEdge;
 import graph.core.impl.SimpleWeightedEdgeFactory;
 import graph.data.CartesianVertexData;
 import graph.reader.CartesianGraphReader;
+import jeanrenaud.nelson.graph.Dijkstra;
+import jeanrenaud.nelson.graph.EuclidianDistance;
+import jeanrenaud.nelson.graph.Node;
+import jeanrenaud.nelson.graph.NodeFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Main {
     /*

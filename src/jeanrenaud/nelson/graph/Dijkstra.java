@@ -1,4 +1,4 @@
-package jeanrenaud.nelson;
+package jeanrenaud.nelson.graph;
 
 import graph.core.impl.Digraph;
 import graph.core.impl.SimpleWeightedEdge;

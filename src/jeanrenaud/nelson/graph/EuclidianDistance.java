@@ -1,12 +1,13 @@
-package jeanrenaud.nelson;
+package jeanrenaud.nelson.graph;
 
 import graph.core.EdgeWeighter;
+import jeanrenaud.nelson.graph.Node;
 
 /**
  * {@link EdgeWeighter} implementation describing a euclidian distance weighting function
  * @param <N> Associated node type
  */
-class EuclidianDistance<N extends Node> implements EdgeWeighter<N>{
+public class EuclidianDistance<N extends Node> implements EdgeWeighter<N>{
 
     /**
      * @param from Origin node

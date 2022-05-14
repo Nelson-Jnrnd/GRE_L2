@@ -1,4 +1,4 @@
-package jeanrenaud.nelson;
+package jeanrenaud.nelson.graph;
 
 public class MarkedNode implements Comparable<MarkedNode> {
     private final Node node;
