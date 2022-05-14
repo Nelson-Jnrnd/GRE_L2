@@ -1,24 +1,39 @@
-package jeanrenaud.nelson.graph;
+package jeanrenaud.nelson.dijkstra;
 
 import graph.core.impl.Digraph;
 import graph.core.impl.SimpleWeightedEdge;
+import jeanrenaud.nelson.graph.Node;
 
 import java.util.*;
 
+/**
+ * Implementation of the Dijkstra algorithm on a weighted oriented graph.
+ * @author Nelson Jeanrenaud
+ */
 public class Dijkstra {
+    /**
+     * Number of nodes in the graph.
+     */
     private final int nbVertices;
+    /**
+     * Graph on which the algorithm is applied.
+     */
     private final Digraph<Node, SimpleWeightedEdge<Node>> graph;
+    /**
+     * List of all the nodes in the graph with their distance Lambda from the source and previous node.
+     */
     private final MarkedNode[] markedNodes;
+    /**
+     * Source node on which the algorithm is applied.
+     */
     private final Node source;
-    private final Node target;
     private int iteration;
     private final DijkstraPriorityQueue nodePriorityQueue;
 
-    public Dijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph, Node source, Node target) {
+    public Dijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph, Node source) {
         this.graph = graph;
         this.source = source;
         this.nbVertices = graph.getNVertices();
-        this.target = target;
         this.nodePriorityQueue = new DijkstraPriorityQueue(nbVertices);
         this.markedNodes = new MarkedNode[nbVertices];
         Initialize();
@@ -36,31 +51,36 @@ public class Dijkstra {
         }
     }
 
-    private static <T extends Comparable<T>> T popMin(List<T> list) {
-        T min = list.get(0);
-        for (int i = 1; i < list.size(); i++) {
-            if (list.get(i).compareTo(min) < 0) {
-                min = list.get(i);
-            }
-        }
-        list.remove(min);
-        return min;
-    }
-
+    /**
+     * Compute the shortest path from the source to all the other nodes.
+     */
     public void run() {
-        //System.out.println(this);
-        while (!doIteration()){
-            //System.out.println(this);
+        while (!doIteration(null)){
         }
     }
 
-    private boolean doIteration() {
+    /**
+     * Compute the shortest path from the source to the given node.
+     * @param node Node to which the shortest path is computed.
+     */
+    public void run(Node target) {
+        while (!doIteration(target)){
+        }
+    }
+
+    /**
+     * Do an iteration of the algorithm.
+     * @param target Node to which the shortest path is computed (null if all the shortest path are computed).
+     * @return true if the algorithm has finished, false otherwise.
+     */
+    private boolean doIteration(Node target) {
         iteration++;
         // Remove the node with the smallest distance from the queue
         MarkedNode removedNode = nodePriorityQueue.poll();
-        //System.out.println("removed node " + removedNode);
         // If that distance is infinite, there is no path to the target
-        if(removedNode == null || removedNode.getDistance() == Integer.MAX_VALUE) {
+        // If the removed node is the target, we are done
+        // If the there is no node in the queue, we are done
+        if(removedNode == null || removedNode.getDistance() == Integer.MAX_VALUE || removedNode.getNode().equals(target)) {
             return true;
         }
         // For each successor of the node:
@@ -85,10 +105,19 @@ public class Dijkstra {
         return iteration + " - " + Arrays.toString(markedNodes);
     }
 
+    /**
+     * Get the state of the nodes
+     * @return The state of the nodes.
+     */
     public Collection<MarkedNode> getResult() {
         return List.of(markedNodes);
     }
 
+    /**
+     * Get the path from the source to the given node.
+     * @param destination Node to which the path is computed.
+     * @return The path from the source to the given node.
+     */
     public Path getShortestPath(Node destination) {
         if(destination.id() >= nbVertices) {
             throw new IllegalArgumentException("Destination node is not in the graph");
