@@ -4,15 +4,16 @@
  */
 package jeanrenaud.nelson;
 
-import graph.core.Edge;
 import graph.core.VertexFactory;
-import graph.core.impl.SimpleWeightedEdge;
 import graph.core.impl.SimpleWeightedEdgeFactory;
 import graph.data.CartesianVertexData;
 import graph.reader.CartesianGraphReader;
+import jeanrenaud.nelson.dijkstra.Dijkstra;
+import jeanrenaud.nelson.graph.EuclidianDistance;
+import jeanrenaud.nelson.graph.Node;
+import jeanrenaud.nelson.graph.NodeFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Main {
     /*
@@ -37,9 +38,11 @@ public class Main {
         Node target = graph.getVertices().stream().filter(node -> node.id() == 10).findFirst().orElse(null);
 
 
-        for (SimpleWeightedEdge<Node> nodeSimpleWeightedEdge : graph.getSuccessorList(2)) {
-            System.out.println("from:" + nodeSimpleWeightedEdge.from().id() + " to: " + nodeSimpleWeightedEdge.to().id() + " wgt:" + nodeSimpleWeightedEdge.weight());
-        }
+        /*for (Node node : graph.getVertices()) {
+            for (SimpleWeightedEdge<Node> nodeSimpleWeightedEdge : graph.getSuccessorList(node.id())) {
+                System.out.println("from:" + nodeSimpleWeightedEdge.from().id() + " to: " + nodeSimpleWeightedEdge.to().id() + " wgt:" + nodeSimpleWeightedEdge.weight());
+            }
+        }*/
         Dijkstra dijkstra = new Dijkstra(graph, source, target);
         System.out.println(dijkstra);
 
@@ -52,7 +55,7 @@ public class Main {
         dijkstra.getResult().forEach(System.out::println);
 
         System.out.println("\nShortest path\n");
-        System.out.println(Arrays.toString(dijkstra.getShortestPath(target)));
+        System.out.println(dijkstra.getShortestPath(target));
 
     }
 }

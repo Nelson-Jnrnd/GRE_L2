@@ -1,4 +1,4 @@
-package jeanrenaud.nelson;
+package jeanrenaud.nelson.graph;
 import graph.core.Vertex;
 import graph.data.CartesianVertexData;
 
