@@ -1,48 +1,50 @@
 package jeanrenaud.nelson;
 
 public class MarkedNode implements Comparable<MarkedNode> {
-    private final int graphIndex;
     private final Node node;
-    private int distance;
+    private MarkedNode previous;
+    private long distance;
+    private boolean shortestPathKnown;
 
     public Node getNode() {
         return node;
-    }
-
-    public int getDistance() {
-        return distance;
     }
 
     public MarkedNode getPrevious() {
         return previous;
     }
 
-    private MarkedNode previous;
+    public long getDistance() {
+        return distance;
+    }
 
-    public MarkedNode(int graphIndex, Node node, int distance, MarkedNode previous) {
-        this.graphIndex = graphIndex;
+    public boolean isShortestPathKnown() {
+        return shortestPathKnown;
+    }
+
+    public void shortestPathDiscovered() {
+        shortestPathKnown = true;
+    }
+
+    public MarkedNode(Node node, long distance, MarkedNode previous) {
         this.node = node;
         this.distance = distance;
         this.previous = previous;
+        this.shortestPathKnown = false;
     }
 
     @Override
     public int compareTo(MarkedNode o) {
-        return Integer.compare(distance, o.distance);
+        return Long.compare(distance, o.distance);
     }
 
-    public void update(int distance, MarkedNode previous) {
+    public void update(long distance, MarkedNode previous) {
         this.distance = distance;
         this.previous = previous;
     }
 
     @Override
     public String toString() {
-        return "MarkedNode{" +
-                "graphIndex=" + graphIndex +
-                ", node=" + node.id() +
-                ", distance=" + distance +
-                ", previous=" + (previous == null ? null : previous.node.id()) +
-                '}';
+        return node.id() + ": (" + distance + ", " + (previous == null ? null : previous.node.id()) + ")" + (shortestPathKnown ? "*" : "");
     }
 }
