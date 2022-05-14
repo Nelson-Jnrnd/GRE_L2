@@ -11,7 +11,7 @@ public class Path{
     /** First node of the path */
     private final MarkedNode start;
     /** Last node of the path */
-    private final MarkedNode end;
+    private MarkedNode end;
 
     /** List of all the nodes in the path */
     private final LinkedList<MarkedNode> path;
@@ -33,6 +33,16 @@ public class Path{
         Collections.reverse(path);
     }
 
+    public void append(List<MarkedNode> path) {
+        this.path.addAll(path);
+        end = path.get(path.size() - 1);
+    }
+
+    public List<MarkedNode> getReversedPath() {
+        LinkedList<MarkedNode> reversed = new LinkedList<>(path);
+        Collections.reverse(reversed);
+        return reversed;
+    }
     public List<MarkedNode> getPath() {
         return path;
     }

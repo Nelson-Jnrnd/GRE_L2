@@ -43,12 +43,12 @@ public class Main {
                 System.out.println("from:" + nodeSimpleWeightedEdge.from().id() + " to: " + nodeSimpleWeightedEdge.to().id() + " wgt:" + nodeSimpleWeightedEdge.weight());
             }
         }*/
-        Dijkstra dijkstra = new Dijkstra(graph, source, target);
+        Dijkstra dijkstra = new Dijkstra(graph, source);
         System.out.println(dijkstra);
 
         System.out.println("\nRunning...\n");
 
-        dijkstra.run();
+        dijkstra.run(target);
         System.out.println(dijkstra);
 
         System.out.println("\nResult\n");
@@ -57,5 +57,11 @@ public class Main {
         System.out.println("\nShortest path\n");
         System.out.println(dijkstra.getShortestPath(target));
 
+        System.out.println("\n- Bidirectional Dijkstra -\n");
+        BidirectionalDijkstra bidirectionalDijkstra = new BidirectionalDijkstra(graph, source, target);
+        System.out.println("\nRunning...\n");
+        bidirectionalDijkstra.run();
+        System.out.println("\nShortest path\n");
+        System.out.println(bidirectionalDijkstra.getShortestPath());
     }
 }
