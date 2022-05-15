@@ -3,98 +3,70 @@ package jeanrenaud.nelson.dijkstra;
 import graph.core.impl.SimpleWeightedEdge;
 import jeanrenaud.nelson.graph.Node;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 // TODO fix le calcul de la distance totale.
 // TODO surement refactor en utilisant les arcs
+
 /**
  * Represents a path between two nodes.
  */
-public class Path{
-    /** First node of the path */
-    private final MarkedNode start;
-    /** Last node of the path */
-    private MarkedNode end;
+public class Path {
 
-    /** List of all the nodes in the path */
-    private final LinkedList<MarkedNode> path;
+    private LinkedList<SimpleWeightedEdge<Node>> edges;
 
-    /**
-     * Creates a new path between two nodes.
-     * @param start first node of the path
-     * @param end last node of the path
-     */
-    public Path(MarkedNode start, MarkedNode end) {
-        this.start = start;
-        this.end = end;
-        MarkedNode current = end;
-        path = new LinkedList<>();
-        while(current != null) {
-            path.add(current);
-            if(current.getPrevious() != null)
-                current = current.getPrevious();
-            else
-                break;
-        }
-        Collections.reverse(path);
+    public Path() {
+        edges = new LinkedList<>();
+    }
+    public Path(List<SimpleWeightedEdge<Node>> edges) {
+        this.edges = new LinkedList<>(edges);
     }
 
-    public void append(List<MarkedNode> path, SimpleWeightedEdge<Node> connectingEdge) {
-        this.path.addAll(path);
-        end = path.get(path.size() - 1);
+    public void push_back(SimpleWeightedEdge<Node> edge) {
+        if (!edges.isEmpty() && edges.getLast().to() != edge.from())
+            throw new IllegalArgumentException("The edge does not start from the last node of the path");
+        edges.addLast(edge);
     }
 
-    public List<MarkedNode> getReversedPath() {
-        LinkedList<MarkedNode> reversed = new LinkedList<>(path);
-        Collections.reverse(reversed);
-        MarkedNode oldPrevious = reversed.get(0);
-        SimpleWeightedEdge<Node> oldEdge = reversed.get(0).getPreviousEdge();
-        reversed.get(0).update(0, null, null);
-        for (int i = 1; i < reversed.size(); i++) {
-            MarkedNode node = reversed.get(i);
-            oldPrevious.update(oldPrevious.getDistance(), node, node.getPreviousEdge());
-            oldPrevious = node.getPrevious();
-            oldEdge = node.getPreviousEdge();
-        }
-        return reversed;
-    }
-    public List<MarkedNode> getPath() {
-        return path;
+    public void push_back(Path path) {
+        if(!edges.isEmpty() && edges.getLast().to() != path.edges.getFirst().from())
+            throw new IllegalArgumentException("The path does not start from the last node of the path");
+        edges.addAll(path.edges);
     }
 
-    public MarkedNode getStart() {
-        return start;
+    public void push_front(SimpleWeightedEdge<Node> edge) {
+        if (!edges.isEmpty() && edges.getFirst().from() != edge.to())
+            throw new IllegalArgumentException("The edge does not end at the first node of the path");
+        edges.addFirst(edge);
     }
 
-    public MarkedNode getEnd() {
-        return end;
+    public void push_front(Path path) {
+        if(!edges.isEmpty() && edges.getFirst().from() != path.edges.getLast().to())
+            throw new IllegalArgumentException("The path does not end at the first node of the path");
+        edges.addAll(0, path.edges);
     }
 
-    /**
-     * Returns the cost of the path.
-     * @return the cost of the path
-     */
-    public long getCost() {
-        long cost = 0;
-        for (MarkedNode node : path) {
-            if(node.getPrevious() != null)
-                cost += node.getPreviousEdge().weight();
-        }
-        return cost;
+    public Path reversed() {
+        Path p = new Path();
+        for (SimpleWeightedEdge<Node> edge : edges)
+            p.push_front(new SimpleWeightedEdge<>(edge.to(), edge.from(), edge.weight()));
+        return p;
+    }
+
+    public long totalWeight() {
+        return edges.stream().mapToLong(SimpleWeightedEdge::weight).sum();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (MarkedNode node : path) {
-            sb.append(node.getNode().id());
-            if(node == end)
-                break;
-            sb.append(" -> ");
+        for (SimpleWeightedEdge<Node> edge : edges) {
+            sb.append(edge.from().id()).append(" -> ");
+            if(edge == edges.getLast())
+                sb.append(edge.to().id());
         }
-        sb.append(" total cost: ").append(getCost());
+        sb.append(" total cost: ").append(totalWeight());
         return sb.toString();
     }
 }

@@ -81,7 +81,7 @@ public class Dijkstra {
 
     /**
      * Compute the shortest path from the source to the given node.
-     * @param node Node to which the shortest path is computed.
+     * @param target Node to which the shortest path is computed.
      */
     public void run(Node target) {
         while (!doIteration(target)){
@@ -156,6 +156,12 @@ public class Dijkstra {
         if(!targetNode.isShortestPathKnown()) {
             throw new IllegalArgumentException("The destination " + destination + " can't be reached");
         }
-        return new Path(markedNodes[source.id()], targetNode);
+        Path path = new Path();
+        MarkedNode currentNode = targetNode;
+        while(currentNode.getPreviousEdge() != null) {
+            path.push_front(currentNode.getPreviousEdge());
+            currentNode = currentNode.getPrevious();
+        }
+        return path;
     }
 }

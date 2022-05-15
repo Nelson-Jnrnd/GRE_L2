@@ -2,9 +2,6 @@ package jeanrenaud.nelson.dijkstra;
 
 import graph.core.impl.Digraph;
 import graph.core.impl.SimpleWeightedEdge;
-import jeanrenaud.nelson.dijkstra.Dijkstra;
-import jeanrenaud.nelson.dijkstra.MarkedNode;
-import jeanrenaud.nelson.dijkstra.Path;
 import jeanrenaud.nelson.graph.Node;
 
 
@@ -74,7 +71,8 @@ public class BidirectionalDijkstra {
                 if (newShortestPathLength < shortestPathLength) {
                     shortestPathLength = newShortestPathLength;
                     Path forwardPath = forward.getShortestPath(removedNode.getNode());
-                    forwardPath.append(backward.getShortestPath(edge.to()).getReversedPath(), edge);
+                    forwardPath.push_back(edge); // TODO renvoyer un path au lieu de void pour chainer
+                    forwardPath.push_back(backward.getShortestPath(edge.to()).reversed());
                     shortestPath = forwardPath;
                 }
             }

@@ -50,10 +50,10 @@ public class Main {
         System.out.println("\nRunning...\n");
 
         dijkstra.run(target);
-        System.out.println(dijkstra);
+        //System.out.println(dijkstra);
 
         System.out.println("\nResult\n");
-        dijkstra.getResult().forEach(System.out::println);
+        //dijkstra.getResult().forEach(System.out::println);
 
         System.out.println("\nShortest path\n");
         System.out.println(dijkstra.getShortestPath(target));
