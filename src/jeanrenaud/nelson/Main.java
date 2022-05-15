@@ -8,6 +8,7 @@ import graph.core.VertexFactory;
 import graph.core.impl.SimpleWeightedEdgeFactory;
 import graph.data.CartesianVertexData;
 import graph.reader.CartesianGraphReader;
+import jeanrenaud.nelson.dijkstra.BidirectionalDijkstra;
 import jeanrenaud.nelson.dijkstra.Dijkstra;
 import jeanrenaud.nelson.graph.EuclidianDistance;
 import jeanrenaud.nelson.graph.Node;
@@ -43,19 +44,25 @@ public class Main {
                 System.out.println("from:" + nodeSimpleWeightedEdge.from().id() + " to: " + nodeSimpleWeightedEdge.to().id() + " wgt:" + nodeSimpleWeightedEdge.weight());
             }
         }*/
-        Dijkstra dijkstra = new Dijkstra(graph, source, target);
+        Dijkstra dijkstra = new Dijkstra(graph, source);
         System.out.println(dijkstra);
 
         System.out.println("\nRunning...\n");
 
-        dijkstra.run();
-        System.out.println(dijkstra);
+        dijkstra.run(target);
+        //System.out.println(dijkstra);
 
         System.out.println("\nResult\n");
-        dijkstra.getResult().forEach(System.out::println);
+        //dijkstra.getResult().forEach(System.out::println);
 
         System.out.println("\nShortest path\n");
         System.out.println(dijkstra.getShortestPath(target));
 
+        System.out.println("\n- Bidirectional Dijkstra -\n");
+        BidirectionalDijkstra bidirectionalDijkstra = new BidirectionalDijkstra(graph, source, target);
+        System.out.println("\nRunning...\n");
+        bidirectionalDijkstra.run();
+        System.out.println("\nShortest path\n");
+        System.out.println(bidirectionalDijkstra.getShortestPath());
     }
 }

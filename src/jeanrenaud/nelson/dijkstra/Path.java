@@ -1,68 +1,72 @@
 package jeanrenaud.nelson.dijkstra;
 
-import java.util.Collections;
+import graph.core.impl.SimpleWeightedEdge;
+import jeanrenaud.nelson.graph.Node;
+
 import java.util.LinkedList;
 import java.util.List;
+
+// TODO fix le calcul de la distance totale.
+// TODO surement refactor en utilisant les arcs
 
 /**
  * Represents a path between two nodes.
  */
-public class Path{
-    /** First node of the path */
-    private final MarkedNode start;
-    /** Last node of the path */
-    private final MarkedNode end;
+public class Path {
 
-    /** List of all the nodes in the path */
-    private final LinkedList<MarkedNode> path;
+    private LinkedList<SimpleWeightedEdge<Node>> edges;
 
-    /**
-     * Creates a new path between two nodes.
-     * @param start first node of the path
-     * @param end last node of the path
-     */
-    public Path(MarkedNode start, MarkedNode end) {
-        this.start = start;
-        this.end = end;
-        MarkedNode current = end;
-        path = new LinkedList<>();
-        while(current != null && current != start) {
-            path.add(current);
-            current = current.getPrevious();
-        }
-        Collections.reverse(path);
+    public Path() {
+        edges = new LinkedList<>();
+    }
+    public Path(List<SimpleWeightedEdge<Node>> edges) {
+        this.edges = new LinkedList<>(edges);
     }
 
-    public List<MarkedNode> getPath() {
-        return path;
+    public void push_back(SimpleWeightedEdge<Node> edge) {
+        if (!edges.isEmpty() && edges.getLast().to() != edge.from())
+            throw new IllegalArgumentException("The edge does not start from the last node of the path");
+        edges.addLast(edge);
     }
 
-    public MarkedNode getStart() {
-        return start;
+    public void push_back(Path path) {
+        if(!edges.isEmpty() && edges.getLast().to() != path.edges.getFirst().from())
+            throw new IllegalArgumentException("The path does not start from the last node of the path");
+        edges.addAll(path.edges);
     }
 
-    public MarkedNode getEnd() {
-        return end;
+    public void push_front(SimpleWeightedEdge<Node> edge) {
+        if (!edges.isEmpty() && edges.getFirst().from() != edge.to())
+            throw new IllegalArgumentException("The edge does not end at the first node of the path");
+        edges.addFirst(edge);
     }
 
-    /**
-     * Returns the cost of the path.
-     * @return the cost of the path
-     */
-    public long getCost() {
-        return end.getDistance();
+    public void push_front(Path path) {
+        if(!edges.isEmpty() && edges.getFirst().from() != path.edges.getLast().to())
+            throw new IllegalArgumentException("The path does not end at the first node of the path");
+        edges.addAll(0, path.edges);
+    }
+
+    public Path reversed() {
+        Path p = new Path();
+        for (SimpleWeightedEdge<Node> edge : edges)
+            p.push_front(new SimpleWeightedEdge<>(edge.to(), edge.from(), edge.weight()));
+        return p;
+    }
+
+    public long totalWeight() {
+        return edges.stream().mapToLong(SimpleWeightedEdge::weight).sum();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (MarkedNode node : path) {
-            sb.append(node.getNode().id());
-            if(node == end)
-                break;
-            sb.append(" -> ");
+        for (SimpleWeightedEdge<Node> edge : edges) {
+            sb.append(edge.from().id()).append(" -> ");
+            if(edge == edges.getLast())
+                sb.append(edge.to().id());
         }
-        sb.append(" total cost: ").append(getCost());
+        sb.append(" total cost: ").append(totalWeight());
         return sb.toString();
     }
 }

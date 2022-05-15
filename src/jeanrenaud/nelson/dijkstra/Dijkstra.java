@@ -7,7 +7,7 @@ import jeanrenaud.nelson.graph.Node;
 import java.util.*;
 
 /**
- * Implementation of the Dijkstra algorithm on a weighted oriented graph.
+ * Implementation of the Dijkstra algorithm on a weighted non-oriented graph.
  * @author Nelson Jeanrenaud
  */
 public class Dijkstra {
@@ -19,16 +19,28 @@ public class Dijkstra {
      * Graph on which the algorithm is applied.
      */
     private final Digraph<Node, SimpleWeightedEdge<Node>> graph;
+
     /**
      * List of all the nodes in the graph with their distance Lambda from the source and previous node.
      */
     private final MarkedNode[] markedNodes;
+
     /**
      * Source node on which the algorithm is applied.
      */
     private final Node source;
+
+
     private int iteration;
+
+
     private final DijkstraPriorityQueue nodePriorityQueue;
+    protected DijkstraPriorityQueue getNodePriorityQueue() {
+        return nodePriorityQueue;
+    }
+    public int getIteration() {
+        return iteration;
+    }
 
     public Dijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph, Node source) {
         this.graph = graph;
@@ -45,10 +57,18 @@ public class Dijkstra {
 
         int index = 0;
         for (Node node : graph.getVertices()) {
-            MarkedNode m = (new MarkedNode(node, node.equals(source) ? 0 : Integer.MAX_VALUE, null));
+            MarkedNode m = (new MarkedNode(
+                    node,
+                    node.equals(source) ? 0 : Integer.MAX_VALUE,
+                    null,
+                    null));
             nodePriorityQueue.add(m);
             markedNodes[index++] = m;
         }
+    }
+
+    protected MarkedNode getMarkedNodeById(int id) {
+        return markedNodes[id];
     }
 
     /**
@@ -61,7 +81,7 @@ public class Dijkstra {
 
     /**
      * Compute the shortest path from the source to the given node.
-     * @param node Node to which the shortest path is computed.
+     * @param target Node to which the shortest path is computed.
      */
     public void run(Node target) {
         while (!doIteration(target)){
@@ -73,31 +93,41 @@ public class Dijkstra {
      * @param target Node to which the shortest path is computed (null if all the shortest path are computed).
      * @return true if the algorithm has finished, false otherwise.
      */
-    private boolean doIteration(Node target) {
+    public boolean doIteration(Node target) {
         iteration++;
         // Remove the node with the smallest distance from the queue
         MarkedNode removedNode = nodePriorityQueue.poll();
         // If that distance is infinite, there is no path to the target
         // If the removed node is the target, we are done
         // If the there is no node in the queue, we are done
-        if(removedNode == null || removedNode.getDistance() == Integer.MAX_VALUE || removedNode.getNode().equals(target)) {
-            return true;
-        }
+        if (isFinished(target, removedNode)) return true;
         // For each successor of the node:
         graph.getSuccessorList(removedNode.getNode().id()).forEach(
-                (successorEdge) -> {
-                    long newDistance = removedNode.getDistance() + successorEdge.weight();
-                    MarkedNode successor = markedNodes[successorEdge.to().id()];
-                    // If the distance to the successor is greater than the distance to the node plus the edge weight
-                    if (newDistance < successor.getDistance()) {
-                        // Update the distance to the successor
-                        // Update the predecessor of the successor
-                        successor.update(newDistance, removedNode);
-                        nodePriorityQueue.update(successor);
-                    }
-                }
+                (successorEdge) -> processEdge(successorEdge, removedNode)
         );
         return false;
+    }
+
+    protected void processEdge(SimpleWeightedEdge<Node> edge, MarkedNode removedNode) {
+        long newDistance = removedNode.getDistance() + edge.weight();
+        MarkedNode successor = markedNodes[edge.to().id()];
+        // If the distance to the successor is greater than the distance to the node plus the edge weight
+        if (newDistance < successor.getDistance()) {
+            // Update the distance to the successor
+            // Update the predecessor of the successor
+            successor.update(newDistance, removedNode, edge);
+            nodePriorityQueue.update(successor);
+        }
+    }
+
+    /**
+     * Check if the algorithm has finished.
+     * @param target Node to which the shortest path is computed (null if all the shortest path are computed).
+     * @param removedNode Node that has been removed from the queue.
+     * @return true if the algorithm has finished, false otherwise.
+     */
+    protected boolean isFinished(Node target, MarkedNode removedNode) {
+        return removedNode == null || removedNode.getDistance() == Integer.MAX_VALUE || removedNode.getNode().equals(target);
     }
 
     @Override
@@ -126,6 +156,12 @@ public class Dijkstra {
         if(!targetNode.isShortestPathKnown()) {
             throw new IllegalArgumentException("The destination " + destination + " can't be reached");
         }
-        return new Path(markedNodes[source.id()], targetNode);
+        Path path = new Path();
+        MarkedNode currentNode = targetNode;
+        while(currentNode.getPreviousEdge() != null) {
+            path.push_front(currentNode.getPreviousEdge());
+            currentNode = currentNode.getPrevious();
+        }
+        return path;
     }
 }
