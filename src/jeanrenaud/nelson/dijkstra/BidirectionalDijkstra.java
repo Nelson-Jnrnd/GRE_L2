@@ -1,4 +1,4 @@
-package jeanrenaud.nelson;
+package jeanrenaud.nelson.dijkstra;
 
 import graph.core.impl.Digraph;
 import graph.core.impl.SimpleWeightedEdge;
@@ -33,9 +33,11 @@ public class BidirectionalDijkstra {
     public void run() {
         while (!getNextIteration().doIteration(
                 getNextIteration() == forward ? target : source
-        )){
+        )) {
         }
+        getNextIteration().doIteration(getNextIteration() == forward ? target : source);
     }
+
     public Path getShortestPath() {
         return shortestPath;
     }
@@ -47,12 +49,15 @@ public class BidirectionalDijkstra {
 
     private class DijkstraConditional extends Dijkstra {
         private DijkstraConditional other;
+
         public void setOther(DijkstraConditional other) {
             this.other = other;
         }
+
         public DijkstraConditional(Digraph<Node, SimpleWeightedEdge<Node>> graph, Node source) {
             super(graph, source);
         }
+
         @Override
         protected boolean isFinished(Node target, MarkedNode removedNode) {
             return super.isFinished(target, removedNode) ||
@@ -62,17 +67,17 @@ public class BidirectionalDijkstra {
         @Override
         protected void processEdge(SimpleWeightedEdge<Node> edge, MarkedNode removedNode) {
             super.processEdge(edge, removedNode);
-            if(other.getMarkedNodeById(edge.to().id()).isShortestPathKnown()) {
-            long newShortestPathLength = removedNode.getDistance()
-                    + edge.weight()
-                    + other.getMarkedNodeById(edge.to().id()).getDistance();
-            if(newShortestPathLength < shortestPathLength){
-                shortestPathLength = newShortestPathLength;
-                Path forwardPath = forward.getShortestPath(removedNode.getNode());
-                forwardPath.append(backward.getShortestPath(edge.to()).getReversedPath());
-                shortestPath = forwardPath;
+            if (other.getMarkedNodeById(edge.to().id()).isShortestPathKnown()) {
+                long newShortestPathLength = removedNode.getDistance()
+                        + edge.weight()
+                        + other.getMarkedNodeById(edge.to().id()).getDistance();
+                if (newShortestPathLength < shortestPathLength) {
+                    shortestPathLength = newShortestPathLength;
+                    Path forwardPath = forward.getShortestPath(removedNode.getNode());
+                    forwardPath.append(backward.getShortestPath(edge.to()).getReversedPath(), edge);
+                    shortestPath = forwardPath;
+                }
             }
-        }
         }
     }
 }

@@ -57,7 +57,11 @@ public class Dijkstra {
 
         int index = 0;
         for (Node node : graph.getVertices()) {
-            MarkedNode m = (new MarkedNode(node, node.equals(source) ? 0 : Integer.MAX_VALUE, null));
+            MarkedNode m = (new MarkedNode(
+                    node,
+                    node.equals(source) ? 0 : Integer.MAX_VALUE,
+                    null,
+                    null));
             nodePriorityQueue.add(m);
             markedNodes[index++] = m;
         }
@@ -111,7 +115,7 @@ public class Dijkstra {
         if (newDistance < successor.getDistance()) {
             // Update the distance to the successor
             // Update the predecessor of the successor
-            successor.update(newDistance, removedNode);
+            successor.update(newDistance, removedNode, edge);
             nodePriorityQueue.update(successor);
         }
     }

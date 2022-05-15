@@ -1,5 +1,6 @@
 package jeanrenaud.nelson.dijkstra;
 
+import graph.core.impl.SimpleWeightedEdge;
 import jeanrenaud.nelson.graph.Node;
 
 /**
@@ -12,6 +13,10 @@ public class MarkedNode implements Comparable<MarkedNode> {
     private final Node node;
     /** Previous node in the shortest path to the source. Can be null */
     private MarkedNode previous;
+
+
+    /** Previous edge in the shortest path to the source. Can be null */
+    private SimpleWeightedEdge<Node> previousEdge;
     /** Distance from the source node. */
     private long distance;
     /**
@@ -25,6 +30,10 @@ public class MarkedNode implements Comparable<MarkedNode> {
 
     public MarkedNode getPrevious() {
         return previous;
+    }
+
+    public SimpleWeightedEdge<Node> getPreviousEdge() {
+        return previousEdge;
     }
 
     public long getDistance() {
@@ -48,10 +57,11 @@ public class MarkedNode implements Comparable<MarkedNode> {
      * @param distance Distance from the source node
      * @param previous Previous node in the shortest path to the source
      */
-    public MarkedNode(Node node, long distance, MarkedNode previous) {
+    public MarkedNode(Node node, long distance, MarkedNode previous, SimpleWeightedEdge<Node> previousEdge) {
         this.node = node;
         this.distance = distance;
         this.previous = previous;
+        this.previousEdge = previousEdge;
         this.shortestPathKnown = false;
     }
 
@@ -60,9 +70,10 @@ public class MarkedNode implements Comparable<MarkedNode> {
      * @param distance Distance from the source node
      * @param previous Previous node in the shortest path to the source
      */
-    public void update(long distance, MarkedNode previous) {
+    public void update(long distance, MarkedNode previous, SimpleWeightedEdge<Node> previousEdge) {
         this.distance = distance;
         this.previous = previous;
+        this.previousEdge = previousEdge;
     }
     @Override
     public int compareTo(MarkedNode o) {

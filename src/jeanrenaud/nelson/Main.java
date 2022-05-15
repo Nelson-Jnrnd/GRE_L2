@@ -8,6 +8,7 @@ import graph.core.VertexFactory;
 import graph.core.impl.SimpleWeightedEdgeFactory;
 import graph.data.CartesianVertexData;
 import graph.reader.CartesianGraphReader;
+import jeanrenaud.nelson.dijkstra.BidirectionalDijkstra;
 import jeanrenaud.nelson.dijkstra.Dijkstra;
 import jeanrenaud.nelson.graph.EuclidianDistance;
 import jeanrenaud.nelson.graph.Node;

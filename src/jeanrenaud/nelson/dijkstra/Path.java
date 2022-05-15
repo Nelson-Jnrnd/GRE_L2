@@ -1,9 +1,14 @@
 package jeanrenaud.nelson.dijkstra;
 
+import graph.core.impl.SimpleWeightedEdge;
+import jeanrenaud.nelson.graph.Node;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+// TODO fix le calcul de la distance totale.
+// TODO surement refactor en utilisant les arcs
 /**
  * Represents a path between two nodes.
  */
@@ -26,14 +31,17 @@ public class Path{
         this.end = end;
         MarkedNode current = end;
         path = new LinkedList<>();
-        while(current != null && current != start) {
+        while(current != null) {
             path.add(current);
-            current = current.getPrevious();
+            if(current.getPrevious() != null)
+                current = current.getPrevious();
+            else
+                break;
         }
         Collections.reverse(path);
     }
 
-    public void append(List<MarkedNode> path) {
+    public void append(List<MarkedNode> path, SimpleWeightedEdge<Node> connectingEdge) {
         this.path.addAll(path);
         end = path.get(path.size() - 1);
     }
@@ -41,6 +49,15 @@ public class Path{
     public List<MarkedNode> getReversedPath() {
         LinkedList<MarkedNode> reversed = new LinkedList<>(path);
         Collections.reverse(reversed);
+        MarkedNode oldPrevious = reversed.get(0);
+        SimpleWeightedEdge<Node> oldEdge = reversed.get(0).getPreviousEdge();
+        reversed.get(0).update(0, null, null);
+        for (int i = 1; i < reversed.size(); i++) {
+            MarkedNode node = reversed.get(i);
+            oldPrevious.update(oldPrevious.getDistance(), node, node.getPreviousEdge());
+            oldPrevious = node.getPrevious();
+            oldEdge = node.getPreviousEdge();
+        }
         return reversed;
     }
     public List<MarkedNode> getPath() {
@@ -60,7 +77,12 @@ public class Path{
      * @return the cost of the path
      */
     public long getCost() {
-        return end.getDistance();
+        long cost = 0;
+        for (MarkedNode node : path) {
+            if(node.getPrevious() != null)
+                cost += node.getPreviousEdge().weight();
+        }
+        return cost;
     }
 
     @Override
