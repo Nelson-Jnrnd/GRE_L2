@@ -4,6 +4,10 @@ import graph.core.impl.Digraph;
 import graph.core.impl.SimpleWeightedEdge;
 import jeanrenaud.nelson.graph.Node;
 
+/**
+ * Represent an algorithm to find the shortest path between two nodes.
+ * @author Nelson Jeanrenaud
+ */
 public interface ShortestPathAlgorithm {
     /**
      * Get the graph used by the algorithm.

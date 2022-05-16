@@ -1,5 +1,6 @@
 package jeanrenaud.nelson.dijkstra;
 
+import java.util.Objects;
 import java.util.PriorityQueue;
 
 /**
@@ -14,9 +15,10 @@ public class DijkstraPriorityQueue extends PriorityQueue<MarkedNode> {
 
     /**
      * Update the priority of the specified element.
-     * @param element
+     * @param element MarkedNode to be updated
      */
     public void update(MarkedNode element) {
+        Objects.requireNonNull(element, "element cannot be null");
         remove(element);
         add(element);
     }
@@ -27,6 +29,8 @@ public class DijkstraPriorityQueue extends PriorityQueue<MarkedNode> {
      */
     @Override
     public boolean contains(Object o) {
+        if(o == null)
+            return false;
         return !((MarkedNode)o).isShortestPathKnown();
     }
 

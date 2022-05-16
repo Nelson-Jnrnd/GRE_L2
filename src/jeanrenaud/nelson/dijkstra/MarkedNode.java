@@ -3,6 +3,8 @@ package jeanrenaud.nelson.dijkstra;
 import graph.core.impl.SimpleWeightedEdge;
 import jeanrenaud.nelson.graph.Node;
 
+import java.util.Objects;
+
 /**
  * Encapsulate a node, it's distance lambda from the source node and the previous node in the shortest path.
  * @author Nelson Jeanrenaud
@@ -13,7 +15,6 @@ public class MarkedNode implements Comparable<MarkedNode> {
     private final Node node;
     /** Previous node in the shortest path to the source. Can be null */
     private MarkedNode previous;
-
 
     /** Previous edge in the shortest path to the source. Can be null */
     private SimpleWeightedEdge<Node> previousEdge;
@@ -58,6 +59,7 @@ public class MarkedNode implements Comparable<MarkedNode> {
      * @param previous Previous node in the shortest path to the source
      */
     public MarkedNode(Node node, long distance, MarkedNode previous, SimpleWeightedEdge<Node> previousEdge) {
+        Objects.requireNonNull(node, "Node cannot be null");
         this.node = node;
         this.distance = distance;
         this.previous = previous;

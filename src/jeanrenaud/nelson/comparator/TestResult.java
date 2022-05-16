@@ -4,6 +4,7 @@ import jeanrenaud.nelson.dijkstra.ShortestPathAlgorithm;
 import jeanrenaud.nelson.graph.Node;
 
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * Represent a test result for a comparison between multiple algorithms.
@@ -23,8 +24,12 @@ public class TestResult {
      * @param source source node
      * @param target target node
      * @param results results of the different algorithms
+     * @throws NullPointerException if source, target or results are null
      */
     public TestResult(Node source, Node target, AlgorithmResult[] results) {
+        Objects.requireNonNull(source, "source cannot be null");
+        Objects.requireNonNull(target, "target cannot be null");
+        Objects.requireNonNull(results, "results cannot be null");
         this.source = source;
         this.target = target;
         this.results = results;
@@ -119,9 +124,30 @@ public class TestResult {
          * @param nbIterations number of iterations
          * @param pathWeight path weight
          * @param pathLength path length
+         * @throws IllegalArgumentException if the path length is negative
+         * @throws IllegalArgumentException if the path weight is negative
+         * @throws IllegalArgumentException if the number of iterations is negative
+         * @throws IllegalArgumentException if the execution time is negative
+         * @throws NullPointerException if the algorithm is null
+         * @throws NullPointerException if the execution time is null
          */
         public AlgorithmResult(ShortestPathAlgorithm algorithm, Duration time, long nbIterations,
                                long pathWeight, long pathLength) {
+            Objects.requireNonNull(algorithm, "algorithm cannot be null");
+            Objects.requireNonNull(time, "time cannot be null");
+            if (pathLength < 0) {
+                throw new IllegalArgumentException("path length cannot be negative");
+            }
+            if (pathWeight < 0) {
+                throw new IllegalArgumentException("path weight cannot be negative");
+            }
+            if (nbIterations < 0) {
+                throw new IllegalArgumentException("number of iterations cannot be negative");
+            }
+            if (time.isNegative()) {
+                throw new IllegalArgumentException("execution time cannot be negative");
+            }
+
             this.algorithm = algorithm;
             this.time = time;
             this.nbIteration = nbIterations;

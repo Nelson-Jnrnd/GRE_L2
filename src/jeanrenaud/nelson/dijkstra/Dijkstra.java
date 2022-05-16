@@ -31,18 +31,23 @@ public class Dijkstra implements ShortestPathAlgorithm {
      * Source node on which the algorithm is applied.
      */
     private Node source;
-
+    /**
+     * Destination node on which the algorithm is applied.
+     */
     private Node target;
 
+    /**
+     * Iteration the algorithm is currently on.
+     */
     private long iteration;
 
-
+    /**
+     * Priority queue of the nodes to visit.
+     */
     private final DijkstraPriorityQueue nodePriorityQueue;
+
     public Digraph<Node, SimpleWeightedEdge<Node>> getGraph() {
         return graph;
-    }
-    protected DijkstraPriorityQueue getNodePriorityQueue() {
-        return nodePriorityQueue;
     }
     public long getIteration() {
         return iteration;
@@ -53,19 +58,36 @@ public class Dijkstra implements ShortestPathAlgorithm {
         return "Dijkstra";
     }
 
+    /**
+     * Create a new Dijkstra instance.
+     * @param graph Graph on which the algorithm is applied.
+     */
     public Dijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph) {
+        Objects.requireNonNull(graph, "Graph cannot be null");
         this.graph = graph;
         this.nbVertices = graph.getNVertices();
         this.nodePriorityQueue = new DijkstraPriorityQueue(nbVertices);
         this.markedNodes = new MarkedNode[nbVertices];
     }
 
+    /**
+     * Initialize the algorithm.
+     * @param source Source node.
+     * @param target Destination node. If null, the algorithm will compute the shortest path to all the nodes.
+     * @throws IllegalArgumentException if the source or the target node is not in the graph.
+     * @throws NullPointerException if the source node is null.
+     */
     protected void initialize(Node source, Node target) {
+        Objects.requireNonNull(source, "Source node cannot be null");
+        if(!graph.getVertices().contains(source) || (target != null && !graph.getVertices().contains(target))) {
+            throw new IllegalArgumentException("Source or target node is not in the graph");
+        }
         this.source = source;
         this.target = target;
         iteration = 0;
         nodePriorityQueue.clear();
 
+        // Initialize the nodes marks
         int index = 0;
         for (Node node : graph.getVertices()) {
             MarkedNode m = (new MarkedNode(
@@ -78,14 +100,28 @@ public class Dijkstra implements ShortestPathAlgorithm {
         }
     }
 
+    /**
+     * Get the MarkedNode with the given index.
+     * @param id Index of the node.
+     * @return Node with the given index.
+     * @throws IndexOutOfBoundsException if the index is out of bounds.
+     */
     protected MarkedNode getMarkedNodeById(int id) {
+        if(id < 0 || id >= nbVertices) {
+            throw new IndexOutOfBoundsException("Invalid node id");
+        }
         return markedNodes[id];
     }
 
     /**
      * Compute the shortest path from the source to all the other nodes.
+     * @param source Source node.
+     * @param target Destination node (optional), if null, the algorithm will compute the shortest path to all the nodes.
+     * @throws IllegalArgumentException if the source or target node is not in the graph.
+     * @throws NullPointerException if the source node is null.
      */
     public void run(Node source, Node target) {
+        Objects.requireNonNull(source, "Source node cannot be null");
         initialize(source, target);
         while (!doIteration()){
         }
@@ -110,7 +146,15 @@ public class Dijkstra implements ShortestPathAlgorithm {
         return false;
     }
 
+    /**
+     * Update the distance of a node if the remomovedNode improved the path.
+     * @param edge Edge between the removed node and the successor.
+     * @param removedNode Node removed from the queue.
+     * @throws NullPointerException if the edge or the removed node is null.
+     */
     protected void processEdge(SimpleWeightedEdge<Node> edge, MarkedNode removedNode) {
+        Objects.requireNonNull(edge, "Edge cannot be null");
+        Objects.requireNonNull(removedNode, "Removed node cannot be null");
         long newDistance = removedNode.getDistance() + edge.weight();
         MarkedNode successor = markedNodes[edge.to().id()];
         // If the distance to the successor is greater than the distance to the node plus the edge weight
@@ -137,20 +181,15 @@ public class Dijkstra implements ShortestPathAlgorithm {
     }
 
     /**
-     * Get the state of the nodes
-     * @return The state of the nodes.
-     */
-    public Collection<MarkedNode> getResult() {
-        return List.of(markedNodes);
-    }
-
-    /**
      * Get the path from the source to the given node.
      * @param destination Node to which the path is computed.
      * @return The path from the source to the given node.
+     * @throws IllegalArgumentException if the destination is not in the graph.
+     * @throws NullPointerException if the destination is null.
+     * @throws NoPathException if there is no path from the source to the destination.
      */
     public Path getShortestPath(Node destination) {
-        Objects.requireNonNull(destination);
+        Objects.requireNonNull(destination, "Destination node cannot be null");
         if(destination.id() >= nbVertices) {
             throw new IllegalArgumentException("Destination node is not in the graph");
         }
@@ -172,7 +211,7 @@ public class Dijkstra implements ShortestPathAlgorithm {
         return getShortestPath(target);
     }
 
-    // Custom exception if the algorithm can't find a path
+    // Exception thrown if the algorithm can't find a path
     public class NoPathException extends IllegalArgumentException {
         public NoPathException() {
             super("The destination " + target + " can't be reached");

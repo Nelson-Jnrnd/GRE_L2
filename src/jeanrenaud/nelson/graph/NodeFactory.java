@@ -16,10 +16,11 @@ public class NodeFactory implements VertexFactory<Node, CartesianVertexData> {
      * @param id Node id of the node to build
      * @param coordinates CartesianVertexData coordinates of the node to build
      * @return The newly built node
+     * @throws NullPointerException if the coordinates are null
      */
     @Override
     public Node makeVertex(int id, CartesianVertexData coordinates) {
-        Objects.requireNonNull(coordinates);
+        Objects.requireNonNull(coordinates, "coordinates cannot be null");
         return  new Node(id, coordinates.x, coordinates.y);
     }
 }

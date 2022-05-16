@@ -3,20 +3,20 @@ package jeanrenaud.nelson.dijkstra;
 import graph.core.impl.SimpleWeightedEdge;
 import jeanrenaud.nelson.graph.Node;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Represents a non-cyclic path between two nodes.
+ * @author Nelson Jeanrenaud
  */
 public class Path {
 
     /**
      * The list of edges that make up the path.
      */
-    private LinkedList<SimpleWeightedEdge<Node>> edges;
+    private final LinkedList<SimpleWeightedEdge<Node>> edges;
 
     public Path() {
         edges = new LinkedList<>();
@@ -25,17 +25,20 @@ public class Path {
     /**
      * Creates a new path from the given list of edges.
      * @param edges the list of edges
+     * @throws NullPointerException if the list of edges is empty
      */
     public Path(List<SimpleWeightedEdge<Node>> edges) {
+        Objects.requireNonNull(edges, "The list of edges cannot be null");
         this.edges = new LinkedList<>(edges);
     }
 
     /**
      * Adds an edge at the end of the path.
      * @param edge the edge to add
+     * @throws NullPointerException if the edge is null
      */
     public void push_back(SimpleWeightedEdge<Node> edge) {
-        Objects.requireNonNull(edge);
+        Objects.requireNonNull(edge, "The edge cannot be null");
         if (!edges.isEmpty() && edges.getLast().to() != edge.from()) {
             throw new IllegalArgumentException("The edge does not start from the last node of the path");
         }
@@ -45,9 +48,10 @@ public class Path {
     /**
      * Append the given path to the end of this path.
      * @param path the path to append
+     * @throws NullPointerException if the path is null
      */
     public void push_back(Path path) {
-        Objects.requireNonNull(path);
+        Objects.requireNonNull(path, "The path cannot be null");
         if (!edges.isEmpty() && !path.edges.isEmpty() && edges.getLast().to() != path.edges.getFirst().from()) {
             throw new IllegalArgumentException("The path does not start from the last node of the path");
         }
@@ -57,9 +61,10 @@ public class Path {
     /**
      * Adds an edge at the beginning of the path.
      * @param edge the edge to add
+     * @throws NullPointerException if the edge is null
      */
     public void push_front(SimpleWeightedEdge<Node> edge) {
-        Objects.requireNonNull(edge);
+        Objects.requireNonNull(edge, "The edge cannot be null");
         if (!edges.isEmpty() && edges.getFirst().from() != edge.to()) {
             throw new IllegalArgumentException("The edge does not end at the first node of the path");
         }
@@ -69,8 +74,10 @@ public class Path {
     /**
      * Append the given path to the beginning of this path.
      * @param path the path to append
+     * @throws NullPointerException if the path is null
      */
     public void push_front(Path path) {
+        Objects.requireNonNull(path, "The path cannot be null");
         if (!edges.isEmpty() && !path.edges.isEmpty() && edges.getFirst().from() != path.edges.getLast().to()) {
             throw new IllegalArgumentException("The path does not end at the first node of the path");
         }

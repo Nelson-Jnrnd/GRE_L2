@@ -40,9 +40,11 @@ public class ShortestPathAlgorithmComparator {
     /**
      * Creates a new instance of ShortestPathAlgorithmComparator.
      * @param algorithms the algorithms to use for the tests.
+     * @throws NullPointerException if algorithms is null.
+     * @throws IllegalArgumentException if algorithms is empty.
      */
     public ShortestPathAlgorithmComparator(ShortestPathAlgorithm[] algorithms) {
-        Objects.requireNonNull(algorithms);
+        Objects.requireNonNull(algorithms, "algorithms cannot be null");
         if (algorithms.length == 0) {
             throw new IllegalArgumentException("At least one algorithm must be provided");
         }
@@ -69,7 +71,7 @@ public class ShortestPathAlgorithmComparator {
      * @param nbRuns the number of runs to perform.
      * @return Instance of this class containing the results.
      */
-    public ShortestPathAlgorithmComparator Analyse(int nbRuns) {
+    public ShortestPathAlgorithmComparator analyse(int nbRuns) {
         int nbNodes = getGraph().getVertices().size();
         for (int i = 0; i < nbRuns;) {
             try {
@@ -87,15 +89,18 @@ public class ShortestPathAlgorithmComparator {
      * @param idSource the id of the source node.
      * @param idTarget the id of the destination node.
      * @return the result of the test.
+     * @throws IndexOutOfBoundsException if the id of the source or destination node is out of bounds.
      */
     public TestResult run(int idSource, int idTarget) {
+        if(idSource < 0 || idSource >= getGraph().getVertices().size() || idTarget < 0 || idTarget >= getGraph().getVertices().size()) {
+            throw new IndexOutOfBoundsException("The id of the source or the destination node is out of bounds");
+        }
         Node source = getGraph().getVertices().get(idSource);
         Node target = getGraph().getVertices().get(idTarget);
         TestResult.AlgorithmResult[] results = new TestResult.AlgorithmResult[algorithms.length];
         for (int i = 0; i < algorithms.length; i++) {
             Instant startTime = Instant.now();
             algorithms[i].run(source, target);
-            //algorithms[i].getShortestPath();
             Instant endTime = Instant.now();
             Path path = algorithms[i].getShortestPath();
             results[i] = new TestResult.AlgorithmResult(algorithms[i], Duration.between(startTime, endTime),
@@ -152,7 +157,7 @@ public class ShortestPathAlgorithmComparator {
                 });
 
 
-        comparator.Analyse(1000);
+        comparator.analyse(1000);
         System.out.println(comparator.toCsv(';', '\n', true));
 
         try {

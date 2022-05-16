@@ -4,6 +4,8 @@ import graph.core.impl.Digraph;
 import graph.core.impl.SimpleWeightedEdge;
 import jeanrenaud.nelson.graph.Node;
 
+import java.util.Objects;
+
 /**
  * Bidirectional Dijkstra algorithm.
  * Uses two Dijkstra algorithms to find the shortest path between two nodes.
@@ -20,8 +22,10 @@ public class BidirectionalDijkstra implements ShortestPathAlgorithm {
     /**
      * Constructor.
      * @param graph the graph to use.
+     * @throws NullPointerException if the graph is null.
      */
     public BidirectionalDijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph) {
+        Objects.requireNonNull(graph, "The graph cannot be null.");
         this.shortestPathLength = Long.MAX_VALUE;
 
         this.forward = new DijkstraConditional(graph);
@@ -35,8 +39,11 @@ public class BidirectionalDijkstra implements ShortestPathAlgorithm {
      * Initializes the two Dijkstra algorithms.
      * @param source the source node.
      * @param target the target node.
+     * @throws NullPointerException if the source or target node is null.
      */
     private void initialize(Node source, Node target) {
+        Objects.requireNonNull(source, "The source node cannot be null.");
+        Objects.requireNonNull(target, "The target node cannot be null.");
         this.shortestPathLength = Long.MAX_VALUE;
 
         forward.initialize(source, target);
@@ -48,17 +55,32 @@ public class BidirectionalDijkstra implements ShortestPathAlgorithm {
         return forward.getGraph();
     }
 
+    /**
+     * Calculate the shortest path from the source to the target.
+     * @param source the source node.
+     * @param target the target node.
+     * @throws NullPointerException if the source or target node is null.
+     */
     @Override
     public void run(Node source, Node target) {
+        Objects.requireNonNull(source, "The source node cannot be null.");
+        Objects.requireNonNull(target, "The target node cannot be null.");
         initialize(source, target);
         while (!getNextIteration().doIteration()) {
         }
     }
 
+    /**
+     * Get the shortest path length found so far.
+     * @return the shortest path length found so far. If no path has been found, returns null
+     */
     @Override
     public Path getShortestPath() {
+        if(shortestPathLength == Long.MAX_VALUE) {
+            return null;
+        }
         // We check which algorithm found the shortest path and build the path accordingly.
-        if(shortestPathLength == forward.getLocalshortestPathLength()) {
+        if(shortestPathLength == forward.getLocalShortestPathLength()) {
             return forward.joinPath();
         }
         return backward.joinPath();
@@ -95,13 +117,13 @@ public class BidirectionalDijkstra implements ShortestPathAlgorithm {
          * Get the shortest path found by this algorithm so far.
          * @return the shortest path found by this algorithm so far.
          */
-        public long getLocalshortestPathLength() {
-            return localshortestPathLength;
+        public long getLocalShortestPathLength() {
+            return localShortestPathLength;
         }
         /** the shortest path found by this algorithm so far.*/
-        private long localshortestPathLength;
+        private long localShortestPathLength;
         /**
-         * The connecting node between the two algorithms for the shortest path found so far.TODO maybe remove
+         * The connecting node between the two algorithms for the shortest path found so far.
          */
         private Node shortestPathNode;
         /**
@@ -137,13 +159,20 @@ public class BidirectionalDijkstra implements ShortestPathAlgorithm {
         @Override
         protected void initialize(Node source, Node target) {
             super.initialize(source, target);
-            localshortestPathLength = Long.MAX_VALUE;
+            localShortestPathLength = Long.MAX_VALUE;
             shortestPathNode = null;
             shortestPathEdge = null;
         }
 
+        /**
+         * Check if the algorithm should stop.
+         * @param removedNode Node that has been removed from the queue.
+         * @return true if the algorithm should stop, false otherwise.
+         * @throws NullPointerException if the other algorithm is not set.
+         */
         @Override
         protected boolean isFinished(MarkedNode removedNode) {
+            Objects.requireNonNull(other, "The other algorithm is not set");
             // If the node has already been visited by the other algorithm, we stop the algorithm.
             return super.isFinished(removedNode) ||
                     other.getMarkedNodeById(removedNode.getNode().id()).isShortestPathKnown();
@@ -153,10 +182,12 @@ public class BidirectionalDijkstra implements ShortestPathAlgorithm {
          * Overlaod the method to update the shortest path if we can connect the two algorithms.
          * @param edge the edge being processed.
          * @param removedNode the node being processed.
+         * @throws NullPointerException if the other algorithm is not set.
          */
         @Override
         protected void processEdge(SimpleWeightedEdge<Node> edge, MarkedNode removedNode) {
             super.processEdge(edge, removedNode);
+            Objects.requireNonNull(other, "The other algorithm is not set");
             if (other.getMarkedNodeById(edge.to().id()).isShortestPathKnown()) {
                 long newShortestPathLength = removedNode.getDistance()
                         + edge.weight()
@@ -165,7 +196,7 @@ public class BidirectionalDijkstra implements ShortestPathAlgorithm {
                 // We don't build the path yet because we don't know if it is the shortest path or not. And building is a costly operation.
                 if (newShortestPathLength < shortestPathLength) {
                     shortestPathLength = newShortestPathLength;
-                    localshortestPathLength = newShortestPathLength;
+                    localShortestPathLength = newShortestPathLength;
                     shortestPathNode = removedNode.getNode();
                     shortestPathEdge = edge;
                 }
@@ -178,7 +209,7 @@ public class BidirectionalDijkstra implements ShortestPathAlgorithm {
          */
         public Path joinPath(){
             Path path = this.getShortestPath(shortestPathNode);
-            path.push_back(shortestPathEdge); // TODO renvoyer un path au lieu de void pour chainer
+            path.push_back(shortestPathEdge);
             path.push_back(other.getShortestPath(shortestPathEdge.to()).reversed());
             return path;
         }
