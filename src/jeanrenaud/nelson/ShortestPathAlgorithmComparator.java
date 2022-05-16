@@ -142,7 +142,7 @@ public class ShortestPathAlgorithmComparator {
                                                             renvoyant la distance euclidienne (arrondie
                                                             à l'entier le plus proche) entre l'extrémité
                                                             initiale et l'extrémité finale de l'arête */),
-                DATA_FOLDER + "R10000_1.txt"                       /* TODO: Chemin des fichiers */
+                DATA_FOLDER + "R50000_1.txt"                       /* TODO: Chemin des fichiers */
         ).graph();
 
         ShortestPathAlgorithmComparator comparator = new ShortestPathAlgorithmComparator(
@@ -152,7 +152,7 @@ public class ShortestPathAlgorithmComparator {
                 });
 
 
-        comparator.Analyse(1000);
+        comparator.Analyse(10000);
         System.out.println(comparator.toCsv(';', '\n', true));
 
         try {
