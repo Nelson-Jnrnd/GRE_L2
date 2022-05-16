@@ -9,19 +9,31 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a path between two nodes.
+ * Represents a non-cyclic path between two nodes.
  */
 public class Path {
 
+    /**
+     * The list of edges that make up the path.
+     */
     private LinkedList<SimpleWeightedEdge<Node>> edges;
 
     public Path() {
         edges = new LinkedList<>();
     }
+
+    /**
+     * Creates a new path from the given list of edges.
+     * @param edges the list of edges
+     */
     public Path(List<SimpleWeightedEdge<Node>> edges) {
         this.edges = new LinkedList<>(edges);
     }
 
+    /**
+     * Adds an edge at the end of the path.
+     * @param edge the edge to add
+     */
     public void push_back(SimpleWeightedEdge<Node> edge) {
         Objects.requireNonNull(edge);
         if (!edges.isEmpty() && edges.getLast().to() != edge.from()) {
@@ -30,6 +42,10 @@ public class Path {
         edges.addLast(edge);
     }
 
+    /**
+     * Append the given path to the end of this path.
+     * @param path the path to append
+     */
     public void push_back(Path path) {
         Objects.requireNonNull(path);
         if (!edges.isEmpty() && !path.edges.isEmpty() && edges.getLast().to() != path.edges.getFirst().from()) {
@@ -38,6 +54,10 @@ public class Path {
         edges.addAll(path.edges);
     }
 
+    /**
+     * Adds an edge at the beginning of the path.
+     * @param edge the edge to add
+     */
     public void push_front(SimpleWeightedEdge<Node> edge) {
         Objects.requireNonNull(edge);
         if (!edges.isEmpty() && edges.getFirst().from() != edge.to()) {
@@ -46,6 +66,10 @@ public class Path {
         edges.addFirst(edge);
     }
 
+    /**
+     * Append the given path to the beginning of this path.
+     * @param path the path to append
+     */
     public void push_front(Path path) {
         if (!edges.isEmpty() && !path.edges.isEmpty() && edges.getFirst().from() != path.edges.getLast().to()) {
             throw new IllegalArgumentException("The path does not end at the first node of the path");
@@ -53,6 +77,10 @@ public class Path {
         edges.addAll(0, path.edges);
     }
 
+    /**
+     * Return a path that is the reverse of this path.
+     * @return the reversed path
+     */
     public Path reversed() {
         Path p = new Path();
         for (SimpleWeightedEdge<Node> edge : edges)
@@ -60,6 +88,10 @@ public class Path {
         return p;
     }
 
+    /**
+     * Calculates the total weight of the path.
+     * @return the total weight of the path
+     */
     public long totalWeight() {
         return edges.stream().mapToLong(SimpleWeightedEdge::weight).sum();
     }
@@ -75,6 +107,11 @@ public class Path {
         sb.append("] total cost: ").append(totalWeight());
         return sb.toString();
     }
+
+    /**
+     * Returns the list of nodes in the path.
+     * @return the list of nodes
+     */
     public long getNumberOfNodes() {
         return edges.size() + 1;
     }

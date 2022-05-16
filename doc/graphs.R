@@ -1,5 +1,5 @@
 setwd('D:/prog/heigVD_2021/GRE/GRE_L2')
-algo_perfs = read.csv("output/result-2022-05-15 21-56-14.csv", sep=';')
+algo_perfs = read.csv("output/result-2022-05-16 16-50-03.csv", sep=';')
 
 summary(algo_perfs)
 
@@ -71,7 +71,7 @@ title("Iteration per path length", xlab = "Path length (% of longest path)", yla
 legend("bottomright", inset=.05, title="Algorithms",
        c("Dijkstra", "Bidirectional Dijkstra"), fill=c("red", "blue"))
 
-plot(1, type="n", xlab="", ylab="", xlim=c(0, 100), ylim=c(0, 20))
+plot(1, type="n", xlab="", ylab="", xlim=c(0, 100), ylim=c(0, 50))
 lines(grp_by_perc$`dij_df$path_length_percentage`, grp_by_perc$time, type="l", col="red")
 lines(grp_by_perc2$`bi_dij_df$path_length_percentage`, grp_by_perc2$time, type="l", col="blue")
 title("Execution time per path length", xlab = "Path length (% of longest path)", ylab = "Execution time in ms")

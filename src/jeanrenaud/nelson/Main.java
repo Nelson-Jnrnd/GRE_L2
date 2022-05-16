@@ -36,11 +36,11 @@ public class Main {
                 DATA_FOLDER + "R10000_1.txt"                       /* TODO: Chemin des fichiers */
         ).graph();
 
-        Node source = graph.getVertices().stream().filter(node -> node.id() == 1569).findFirst().orElse(null);
-        Node target = graph.getVertices().stream().filter(node -> node.id() == 5469).findFirst().orElse(null);
+        Node source = graph.getVertices().stream().filter(node -> node.id() == 649).findFirst().orElse(null);
+        Node target = graph.getVertices().stream().filter(node -> node.id() == 9407).findFirst().orElse(null);
 
 
-        for (Node node : graph.getVertices()) {
+       /* for (Node node : graph.getVertices()) {
             for (SimpleWeightedEdge<Node> nodeSimpleWeightedEdge : graph.getSuccessorList(node.id())) {
                 System.out.println("from:" + nodeSimpleWeightedEdge.from().id() + " to: " + nodeSimpleWeightedEdge.to().id() + " wgt:" + nodeSimpleWeightedEdge.weight());
             }
@@ -58,12 +58,12 @@ public class Main {
 
         System.out.println("\nShortest path\n");
         System.out.println(dijkstra.getShortestPath());
-
-        System.out.println("\n- Bidirectional Dijkstra -\n");
+*/
+        //System.out.println("\n- Bidirectional Dijkstra -\n");
         BidirectionalDijkstra bidirectionalDijkstra = new BidirectionalDijkstra(graph);
-        System.out.println("\nRunning...\n");
+        //System.out.println("\nRunning...\n");
         bidirectionalDijkstra.run(source, target);
-        System.out.println("\nShortest path\n");
-        System.out.println(bidirectionalDijkstra.getShortestPath());
+        //System.out.println("\nShortest path\n");
+        bidirectionalDijkstra.getShortestPath();
     }
 }
