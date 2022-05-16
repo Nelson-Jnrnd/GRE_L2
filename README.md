@@ -1,2 +1,2 @@
-# GRE_L2
+# Salut vincent :)
 Implementation of the Bidirectional Dijkstra algorithm
