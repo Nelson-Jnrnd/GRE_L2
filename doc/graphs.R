@@ -1,5 +1,5 @@
 setwd('D:/prog/heigVD_2021/GRE/GRE_L2')
-algo_perfs = read.csv("output/result-2022-05-16 16-50-03.csv", sep=';')
+algo_perfs = read.csv("output/result-2022-05-16 21-03-33.csv", sep=';')
 
 summary(algo_perfs)
 
@@ -39,7 +39,7 @@ plot(algo_perfs$Dijkstra.path.length, algo_perfs$Dijkstra.iteration - algo_perfs
      xlab = "Path length (number of nodes)", ylab = "Number of iterations")
 title("Iterations gained with Bidirectional Dijkstra per path length")
 
-unwrapped_df$interval <- cut(unwrapped_df$path_length, breaks = seq(0, 140, by=5))
+unwrapped_df$interval <- cut(unwrapped_df$path_length, breaks = seq(0, 300, by=5))
 algo_perfs$interval <- cut(algo_perfs$Dijkstra.path.length, breaks = seq(0, max(algo_perfs$Dijkstra.path.length), by=5))
 
 plot(algo_perfs$interval, algo_perfs$Dijkstra.iteration - algo_perfs$Bidirectional.Dijkstra.iteration,
@@ -64,7 +64,7 @@ bi_dij_df <- unwrapped_df %>% filter(unwrapped_df$algorithm == "Bidirectional Di
 grp_by_perc <- dij_df %>% group_by(dij_df$path_length_percentage) %>% summarise_all(mean, na.rm = TRUE)
 grp_by_perc2 <- bi_dij_df %>% group_by(bi_dij_df$path_length_percentage) %>% summarise_all(mean, na.rm = TRUE)
 
-plot(1, type="n", xlab="", ylab="", xlim=c(0, 100), ylim=c(0, 10000))
+plot(1, type="n", xlab="", ylab="", xlim=c(0, 100), ylim=c(0, 30000))
 lines(grp_by_perc$`dij_df$path_length_percentage`, grp_by_perc$iteration, type="l", col="red")
 lines(grp_by_perc2$`bi_dij_df$path_length_percentage`, grp_by_perc2$iteration, type="l", col="blue")
 title("Iteration per path length", xlab = "Path length (% of longest path)", ylab = "Number of iterations")

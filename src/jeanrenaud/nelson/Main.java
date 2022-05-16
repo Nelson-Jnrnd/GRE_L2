@@ -5,13 +5,11 @@
 package jeanrenaud.nelson;
 
 import graph.core.VertexFactory;
-import graph.core.impl.SimpleWeightedEdge;
 import graph.core.impl.SimpleWeightedEdgeFactory;
 import graph.data.CartesianVertexData;
 import graph.reader.CartesianGraphReader;
 import jeanrenaud.nelson.dijkstra.BidirectionalDijkstra;
-import jeanrenaud.nelson.dijkstra.Dijkstra;
-import jeanrenaud.nelson.graph.EuclidianDistance;
+import jeanrenaud.nelson.graph.EuclideanDistance;
 import jeanrenaud.nelson.graph.Node;
 import jeanrenaud.nelson.graph.NodeFactory;
 
@@ -29,7 +27,7 @@ public class Main {
         var graph = new CartesianGraphReader<>(
                 nodeFactory                                  /* TODO: Fournir une fabrique de sommets (il
                                                             s'agit d'une interface fonctionnelle) */,
-                new SimpleWeightedEdgeFactory<>(new EuclidianDistance<>()    /* TODO: Fournir une fonction de pondération
+                new SimpleWeightedEdgeFactory<>(new EuclideanDistance<>()    /* TODO: Fournir une fonction de pondération
                                                             renvoyant la distance euclidienne (arrondie
                                                             à l'entier le plus proche) entre l'extrémité
                                                             initiale et l'extrémité finale de l'arête */),

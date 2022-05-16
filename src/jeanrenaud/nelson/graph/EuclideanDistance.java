@@ -1,21 +1,25 @@
 package jeanrenaud.nelson.graph;
 
 import graph.core.EdgeWeighter;
-import jeanrenaud.nelson.graph.Node;
+
+import java.util.Objects;
 
 /**
- * {@link EdgeWeighter} implementation describing a euclidian distance weighting function
+ * {@link EdgeWeighter} implementation describing a euclidean distance weighting function
  * @param <N> Associated node type
+ * @author Nelson Jeanrenaud
  */
-public class EuclidianDistance<N extends Node> implements EdgeWeighter<N>{
+public class EuclideanDistance<N extends Node> implements EdgeWeighter<N>{
 
     /**
      * @param from Origin node
      * @param to Destination node
-     * @return Euclidian distance between the two nodes
+     * @return Euclidean distance between the two nodes
      */
     @Override
     public long weight(N from, N to) {
+        Objects.requireNonNull(from);
+        Objects.requireNonNull(to);
         return Math.round(Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2)));
     }
 }

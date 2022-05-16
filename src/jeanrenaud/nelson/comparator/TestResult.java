@@ -1,4 +1,4 @@
-package jeanrenaud.nelson;
+package jeanrenaud.nelson.comparator;
 
 import jeanrenaud.nelson.dijkstra.ShortestPathAlgorithm;
 import jeanrenaud.nelson.graph.Node;

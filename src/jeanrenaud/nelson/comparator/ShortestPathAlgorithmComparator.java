@@ -1,4 +1,4 @@
-package jeanrenaud.nelson;
+package jeanrenaud.nelson.comparator;
 
 import graph.core.VertexFactory;
 import graph.core.impl.Digraph;
@@ -10,7 +10,7 @@ import jeanrenaud.nelson.dijkstra.BidirectionalDijkstra;
 import jeanrenaud.nelson.dijkstra.Dijkstra;
 import jeanrenaud.nelson.dijkstra.Path;
 import jeanrenaud.nelson.dijkstra.ShortestPathAlgorithm;
-import jeanrenaud.nelson.graph.EuclidianDistance;
+import jeanrenaud.nelson.graph.EuclideanDistance;
 import jeanrenaud.nelson.graph.Node;
 import jeanrenaud.nelson.graph.NodeFactory;
 
@@ -138,11 +138,11 @@ public class ShortestPathAlgorithmComparator {
         var graph = new CartesianGraphReader<>(
                 nodeFactory                                  /* TODO: Fournir une fabrique de sommets (il
                                                             s'agit d'une interface fonctionnelle) */,
-                new SimpleWeightedEdgeFactory<>(new EuclidianDistance<>()    /* TODO: Fournir une fonction de pondération
+                new SimpleWeightedEdgeFactory<>(new EuclideanDistance<>()    /* TODO: Fournir une fonction de pondération
                                                             renvoyant la distance euclidienne (arrondie
                                                             à l'entier le plus proche) entre l'extrémité
                                                             initiale et l'extrémité finale de l'arête */),
-                DATA_FOLDER + "R50000_1.txt"                       /* TODO: Chemin des fichiers */
+                DATA_FOLDER + "R10000_1.txt"                       /* TODO: Chemin des fichiers */
         ).graph();
 
         ShortestPathAlgorithmComparator comparator = new ShortestPathAlgorithmComparator(
@@ -152,7 +152,7 @@ public class ShortestPathAlgorithmComparator {
                 });
 
 
-        comparator.Analyse(10000);
+        comparator.Analyse(1000);
         System.out.println(comparator.toCsv(';', '\n', true));
 
         try {
