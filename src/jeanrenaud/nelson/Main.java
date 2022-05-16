@@ -5,6 +5,7 @@
 package jeanrenaud.nelson;
 
 import graph.core.VertexFactory;
+import graph.core.impl.SimpleWeightedEdge;
 import graph.core.impl.SimpleWeightedEdgeFactory;
 import graph.data.CartesianVertexData;
 import graph.reader.CartesianGraphReader;
@@ -35,33 +36,33 @@ public class Main {
                 DATA_FOLDER + "R10000_1.txt"                       /* TODO: Chemin des fichiers */
         ).graph();
 
-        Node source = graph.getVertices().stream().filter(node -> node.id() == 2).findFirst().orElse(null);
-        Node target = graph.getVertices().stream().filter(node -> node.id() == 10).findFirst().orElse(null);
+        Node source = graph.getVertices().stream().filter(node -> node.id() == 1569).findFirst().orElse(null);
+        Node target = graph.getVertices().stream().filter(node -> node.id() == 5469).findFirst().orElse(null);
 
 
-        /*for (Node node : graph.getVertices()) {
+        for (Node node : graph.getVertices()) {
             for (SimpleWeightedEdge<Node> nodeSimpleWeightedEdge : graph.getSuccessorList(node.id())) {
                 System.out.println("from:" + nodeSimpleWeightedEdge.from().id() + " to: " + nodeSimpleWeightedEdge.to().id() + " wgt:" + nodeSimpleWeightedEdge.weight());
             }
-        }*/
-        Dijkstra dijkstra = new Dijkstra(graph, source);
+        }
+        Dijkstra dijkstra = new Dijkstra(graph);
         System.out.println(dijkstra);
 
         System.out.println("\nRunning...\n");
 
-        dijkstra.run(target);
+        dijkstra.run(source, target);
         //System.out.println(dijkstra);
 
         System.out.println("\nResult\n");
         //dijkstra.getResult().forEach(System.out::println);
 
         System.out.println("\nShortest path\n");
-        System.out.println(dijkstra.getShortestPath(target));
+        System.out.println(dijkstra.getShortestPath());
 
         System.out.println("\n- Bidirectional Dijkstra -\n");
-        BidirectionalDijkstra bidirectionalDijkstra = new BidirectionalDijkstra(graph, source, target);
+        BidirectionalDijkstra bidirectionalDijkstra = new BidirectionalDijkstra(graph);
         System.out.println("\nRunning...\n");
-        bidirectionalDijkstra.run();
+        bidirectionalDijkstra.run(source, target);
         System.out.println("\nShortest path\n");
         System.out.println(bidirectionalDijkstra.getShortestPath());
     }

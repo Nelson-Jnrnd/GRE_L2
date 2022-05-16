@@ -5,38 +5,55 @@ import graph.core.impl.SimpleWeightedEdge;
 import jeanrenaud.nelson.graph.Node;
 
 
-public class BidirectionalDijkstra {
+public class BidirectionalDijkstra implements ShortestPathAlgorithm {
     private final DijkstraConditional forward;
     private final DijkstraConditional backward;
-
-    private final Node source;
-    private final Node target;
 
     private long shortestPathLength;
     private Path shortestPath;
 
-    public BidirectionalDijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph, Node source, Node target) {
-        this.source = source;
-        this.target = target;
+    public BidirectionalDijkstra(Digraph<Node, SimpleWeightedEdge<Node>> graph) {
         this.shortestPathLength = Long.MAX_VALUE;
         this.shortestPath = null;
 
-        this.forward = new DijkstraConditional(graph, source);
-        this.backward = new DijkstraConditional(graph, target);
+        this.forward = new DijkstraConditional(graph);
+        this.backward = new DijkstraConditional(graph);
+
         forward.setOther(backward);
         backward.setOther(forward);
     }
 
-    public void run() {
-        while (!getNextIteration().doIteration(
-                getNextIteration() == forward ? target : source
-        )) {
+    private void initialize(Node source, Node target) {
+        this.shortestPathLength = Long.MAX_VALUE;
+        this.shortestPath = null;
+
+        forward.initialize(source, target);
+        backward.initialize(target, source);
+    }
+
+    @Override
+    public Digraph<Node, SimpleWeightedEdge<Node>> getGraph() {
+        return forward.getGraph();
+    }
+
+    public void run(Node source, Node target) {
+        initialize(source, target);
+        while (!getNextIteration().doIteration()) {
         }
-        getNextIteration().doIteration(getNextIteration() == forward ? target : source);
     }
 
     public Path getShortestPath() {
         return shortestPath;
+    }
+
+    @Override
+    public long getIteration() {
+        return forward.getIteration() + backward.getIteration();
+    }
+
+    @Override
+    public String getName() {
+        return "Bidirectional Dijkstra";
     }
 
     private Dijkstra getNextIteration() {
@@ -51,13 +68,13 @@ public class BidirectionalDijkstra {
             this.other = other;
         }
 
-        public DijkstraConditional(Digraph<Node, SimpleWeightedEdge<Node>> graph, Node source) {
-            super(graph, source);
+        public DijkstraConditional(Digraph<Node, SimpleWeightedEdge<Node>> graph) {
+            super(graph);
         }
 
         @Override
-        protected boolean isFinished(Node target, MarkedNode removedNode) {
-            return super.isFinished(target, removedNode) ||
+        protected boolean isFinished(MarkedNode removedNode) {
+            return super.isFinished(removedNode) ||
                     !other.getNodePriorityQueue().contains(other.getMarkedNodeById(removedNode.getNode().id()));
         }
 
@@ -70,10 +87,10 @@ public class BidirectionalDijkstra {
                         + other.getMarkedNodeById(edge.to().id()).getDistance();
                 if (newShortestPathLength < shortestPathLength) {
                     shortestPathLength = newShortestPathLength;
-                    Path forwardPath = forward.getShortestPath(removedNode.getNode());
-                    forwardPath.push_back(edge); // TODO renvoyer un path au lieu de void pour chainer
-                    forwardPath.push_back(backward.getShortestPath(edge.to()).reversed());
-                    shortestPath = forwardPath;
+                    Path path = this.getShortestPath(removedNode.getNode());
+                    path.push_back(edge); // TODO renvoyer un path au lieu de void pour chainer
+                    path.push_back(other.getShortestPath(edge.to()).reversed());
+                    shortestPath = path;
                 }
             }
         }
